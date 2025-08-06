@@ -154,10 +154,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "matplotlib" },
-    { name = "mediapipe" },
-    { name = "numpy" },
-    { name = "opencv-python" },
+    { name = "matplotlib", specifier = ">=3.10.5" },
+    { name = "mediapipe", specifier = ">=0.10.21" },
+    { name = "numpy", specifier = ">=1.26.4" },
+    { name = "opencv-python", specifier = ">=4.11.0.86" },
 ]
 
 [package.metadata.requires-dev]

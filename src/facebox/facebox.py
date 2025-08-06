@@ -37,7 +37,8 @@ TEXT_COLOR = (255, 0, 0)  # red
 
 # %% Functions >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
 
-def draw_landmarks_on_image(bgr_image, detection_result):
+
+def _draw_landmarks_on_image(bgr_image, detection_result):
     """Draw landmarks on image."""
     face_landmarks_list = detection_result.face_landmarks
     annotated_image = np.copy(bgr_image)
@@ -82,7 +83,7 @@ def draw_landmarks_on_image(bgr_image, detection_result):
     return annotated_image
 
 
-def plot_face_blendshapes_bar_graph(face_blendshapes):
+def _plot_face_blendshapes_bar_graph(face_blendshapes):
     """Extract the face blendshapes category names and scores."""
     face_blendshapes_names = [
         face_blendshapes_category.category_name
@@ -187,7 +188,7 @@ def _normalized_to_pixel_coordinates(
     return x_px, y_px
 
 
-def visualize_bounding_box(image: np.ndarray, detection_result) -> np.ndarray:
+def _visualize_bounding_box(image: np.ndarray, detection_result) -> np.ndarray:
     """Draws bounding boxes and keypoints on the input image and return it.
     Args:
         image: The input RGB image.
@@ -261,7 +262,7 @@ def find_landmarks(
         face_landmarker_result = landmarker.detect(mp_image)
 
     # Draw the annotated image
-    annotated_image = draw_landmarks_on_image(
+    annotated_image = _draw_landmarks_on_image(
         bgr_image=cv2.cvtColor(
             mp_image.numpy_view(), cv2.COLOR_RGB2BGR
         ),  # requires BGR images
@@ -275,7 +276,7 @@ def find_landmarks(
 
     # Visualize the face blendshapes categories using a bar graph
     if plot_blendshapes:
-        plot_face_blendshapes_bar_graph(
+        _plot_face_blendshapes_bar_graph(
             face_blendshapes=face_landmarker_result.face_blendshapes[0]
         )
 
@@ -308,7 +309,7 @@ def find_bounding_box(
 
     # STEP 5: Process the detection result. In this case, visualize it.
     image_copy = np.copy(mp_image.numpy_view())
-    annotated_image = visualize_bounding_box(image_copy, detection_result)
+    annotated_image = _visualize_bounding_box(image_copy, detection_result)
     if show_bounding_box:
         rgb_annotated_image = cv2.cvtColor(
             annotated_image, cv2.COLOR_BGR2RGB
