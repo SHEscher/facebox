@@ -15,3 +15,7 @@ from facebox import (
     crop_square,  # crop image around face, where width==height
 )
 ```
+
+## Related work
+
+See the [MTCNN](https://github.com/ipazc/mtcnn) model.
