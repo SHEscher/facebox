@@ -1,6 +1,6 @@
 [project]
 name = "facebox"
-version = "0.1.0"
+version = "0.1.1"
 description = "facebox is a library for processing face images."
 readme = "README.md"
 authors = [
