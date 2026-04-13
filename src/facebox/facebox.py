@@ -6,18 +6,19 @@ Most functions are wrapped around the tools in `mediapipe` (see their Apache 2.0
     * https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker/python
 
 Author: Simon M. Hofmann
-Years: 2025
+Years: 2025-2026
 """
 
 # %% Import
+import math
 from pathlib import Path
+
 import cv2
 import matplotlib.pyplot as plt
 import mediapipe as mp
+import numpy as np
 from mediapipe import solutions
 from mediapipe.framework.formats import landmark_pb2
-import numpy as np
-import math
 
 # %% Set global vars & paths >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
 LANDMARK_MODEL_NAME = (
@@ -291,7 +292,7 @@ def find_bounding_box(
     image_path: str | Path,
     show_bounding_box: bool = True,
 ) -> tuple[mp.tasks.vision.FaceDetectorResult, np.ndarray]:
-    """Find bounding box in the input image."""
+    """Find the bounding box in the input image."""
     base_options = mp.tasks.BaseOptions(
         model_asset_path=get_face_detector_model(DETECTION_MODEL_PATH)
     )
