@@ -17,3 +17,6 @@ model/
 
 # Mac
 .DS_Store
+
+# uv
+uv.lock
