@@ -64,7 +64,14 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    margin_slider = mo.ui.slider(0.0, 2.0, step=0.1, value=1.0, label="Crop margin (× face size)", show_value=True)
+    margin_slider = mo.ui.slider(
+        0.0,
+        2.0,
+        step=0.1,
+        value=1.0,
+        label="Crop margin (× face size)",
+        show_value=True,
+    )
     margin_slider
     return (margin_slider,)
 
@@ -89,7 +96,11 @@ def _(Path, crop_square, file_upload, margin_slider, tempfile):
             crops.append((uploaded.name, cropped))
         return crops
 
-    crops = compute_crops(file_upload.value, margin_slider.value) if file_upload.value else []
+    crops = (
+        compute_crops(file_upload.value, margin_slider.value)
+        if file_upload.value
+        else []
+    )
     return (crops,)
 
 
@@ -106,7 +117,11 @@ def _(crops, mo, plt):
         return panels
 
     _panels = preview_crops(crops)
-    (mo.hstack(_panels) if _panels else mo.md("*Upload one or more images to preview the square crop.*"))
+    (
+        mo.hstack(_panels)
+        if _panels
+        else mo.md("*Upload one or more images to preview the square crop.*")
+    )
     return
 
 
@@ -115,7 +130,12 @@ def _(Path, crops, mo):
     def default_name(name):
         return f"{Path(name).stem}_cropped{Path(name).suffix or '.png'}"
 
-    name_inputs = mo.ui.array([mo.ui.text(value=default_name(name), label=f"Save “{name}” as") for name, _ in crops])
+    name_inputs = mo.ui.array(
+        [
+            mo.ui.text(value=default_name(name), label=f"Save “{name}” as")
+            for name, _ in crops
+        ]
+    )
     _start = Path("data/faces") if Path("data/faces").is_dir() else Path.cwd()
     output_dir = mo.ui.file_browser(
         initial_path=_start,
