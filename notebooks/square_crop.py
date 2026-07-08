@@ -13,8 +13,9 @@ Crop face images to squares.
 Interactive (upload images, tune the margin, preview crops):
 
 ```shell
-uv run marimo edit square_crop.py      # edit / author
-uv run marimo run square_crop.py       # run as an app
+uv run marimo run square_crop.py  # run as an app
+# or
+uv run marimo edit square_crop.py  # edit / author
 ```
 
 Command line (batch-crop every non-square image in a directory, in place):
