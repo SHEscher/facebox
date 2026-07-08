@@ -61,7 +61,8 @@ That is, you can download a single script/notebook and can run them independentl
 
 ### Interactive
 
-> Here is an example for `square_crop.py` script/notebook (more to come) 
+> Here is an example for `square_crop.py` script/notebook (more to come).
+> Note, this will download a very small model in model/ (<<1MB).
 
 Load one or more face images, tune the crop margin with a slider, preview the
 square crops, name them and save them to a chosen folder:
