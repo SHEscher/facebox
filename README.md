@@ -56,14 +56,15 @@ cropped = crop_square("data/faces/portrait.jpg", perc_margin=1.0, save=True)
 [marimo](https://marimo.io) notebooks that wrap toolbox functions, such as `crop_square` can be found in `notebooks/`.
 These can be run both as **interactive apps** and as **command-line scripts**.
 
-*Note, these notebooks are self-contained [PEP 723](https://peps.python.org/pep-0723/) scripts.*
+*Note, these notebooks are self-contained [PEP 723](https://peps.python.org/pep-0723/) scripts.
+That is, you can download a single script/notebook and can run them independently.*
 
 ### Interactive
 
 > Here is an example for `square_crop.py` script/notebook (more to come) 
 
-Upload one or more face images, tune the crop margin with a slider, preview the
-square crops, name them, and save them to a chosen folder:
+Load one or more face images, tune the crop margin with a slider, preview the
+square crops, name them and save them to a chosen folder:
 
 ```shell
 uv run marimo run notebooks/square_crop.py    # run as an interactive app
