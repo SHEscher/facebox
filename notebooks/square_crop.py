@@ -2,7 +2,7 @@
 # requires-python = ">=3.12,<3.13"
 # dependencies = [
 #     "marimo",
-#     "facebox @ file:////Users/zimon/Bibliothek/Software/Python/facebox",
+#     "facebox @ git+https://github.com/SHEscher/facebox",
 #     "matplotlib",
 #     "opencv-python",
 # ]
@@ -70,9 +70,9 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(Path, crop_square, file_upload, margin_slider, mo, plt, tempfile):
-    def preview_uploads(uploaded_files, perc_margin):
-        panels = []
+def _(Path, crop_square, file_upload, margin_slider, tempfile):
+    def compute_crops(uploaded_files, perc_margin):
+        crops = []
         for uploaded in uploaded_files:
             suffix = Path(uploaded.name).suffix or ".png"
             with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
@@ -86,16 +86,77 @@ def _(Path, crop_square, file_upload, margin_slider, mo, plt, tempfile):
                 save=False,
             )
             tmp_path.unlink(missing_ok=True)
+            crops.append((uploaded.name, cropped))
+        return crops
 
+    crops = compute_crops(file_upload.value, margin_slider.value) if file_upload.value else []
+    return (crops,)
+
+
+@app.cell(hide_code=True)
+def _(crops, mo, plt):
+    def preview_crops(cropped_items):
+        panels = []
+        for name, cropped in cropped_items:
             fig, ax = plt.subplots()
             ax.imshow(cropped)
-            ax.set_title(f"{uploaded.name} → {cropped.shape[1]}×{cropped.shape[0]}")
+            ax.set_title(f"{name} → {cropped.shape[1]}×{cropped.shape[0]}")
             ax.axis("off")
             panels.append(fig)
         return panels
 
-    _panels = preview_uploads(file_upload.value, margin_slider.value) if file_upload.value else []
-    (mo.vstack(_panels) if _panels else mo.md("*Upload one or more images to preview the square crop.*"))
+    _panels = preview_crops(crops)
+    (mo.hstack(_panels) if _panels else mo.md("*Upload one or more images to preview the square crop.*"))
+    return
+
+
+@app.cell(hide_code=True)
+def _(Path, crops, mo):
+    def default_name(name):
+        return f"{Path(name).stem}_cropped{Path(name).suffix or '.png'}"
+
+    name_inputs = mo.ui.array([mo.ui.text(value=default_name(name), label=f"Save “{name}” as") for name, _ in crops])
+    _start = Path("data/faces") if Path("data/faces").is_dir() else Path.cwd()
+    output_dir = mo.ui.file_browser(
+        initial_path=_start,
+        selection_mode="directory",
+        multiple=False,
+        label="Output folder — tick ☑ the destination folder (click the name to navigate in)",
+    )
+    save_button = mo.ui.run_button(label="💾 Save cropped image(s)")
+
+    mo.vstack([output_dir, name_inputs, save_button]) if crops else mo.md("")
+    return name_inputs, output_dir, save_button
+
+
+@app.cell(hide_code=True)
+def _(Path, crops, cv2, mo, name_inputs, output_dir, save_button):
+    def save_crops(cropped_items, names, out_dir):
+        out_dir.mkdir(parents=True, exist_ok=True)
+        saved = []
+        for (orig_name, cropped), chosen in zip(cropped_items, names):
+            out_name = chosen.strip() or f"{Path(orig_name).stem}_cropped"
+            if not Path(out_name).suffix:
+                out_name += Path(orig_name).suffix or ".png"
+            dest = out_dir / out_name
+            # facebox returns RGB(A) arrays; OpenCV writes BGR(A). Convert by
+            # channel count so alpha isn't mistaken for a colour channel.
+            if cropped.ndim == 3 and cropped.shape[2] == 4:
+                bgr = cv2.cvtColor(cropped, cv2.COLOR_RGBA2BGRA)
+            else:
+                bgr = cv2.cvtColor(cropped, cv2.COLOR_RGB2BGR)
+            cv2.imwrite(str(dest), bgr)
+            saved.append(dest)
+        return saved
+
+    if not save_button.value or not crops:
+        _result = mo.md("*Set names, tick an output folder, then click **Save**.*")
+    elif output_dir.path(0) is None:
+        _result = mo.md("⚠️ *Tick ☑ the destination folder in the browser above first.*")
+    else:
+        _saved = save_crops(crops, name_inputs.value, output_dir.path(0))
+        _result = mo.md("**Saved:**\n\n" + "\n".join(f"- `{d}`" for d in _saved))
+    _result
     return
 
 
