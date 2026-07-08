@@ -36,12 +36,12 @@ from facebox import (
 
 ### API overview
 
-| Function | What it does |
-| --- | --- |
-| `find_landmarks(image_path, show_landmarks=True, plot_blendshapes=False)` | Returns the mediapipe landmark result and an annotated image. |
-| `find_bounding_box(image_path, show_bounding_box=True)` | Returns the detection result and an image with the face bounding box drawn. |
-| `crop_square(image_path, perc_margin=1.0, plot_cropped_image=True, save=False)` | Crops a square around the detected face; `perc_margin` adds padding (× face size). With `save=True` it writes `<name>_cropped<ext>` next to the original. |
-| `get_landmark_model()` / `get_face_detector_model()` | Return the local model path, downloading the model file if missing. |
+| Function                                                                         | What it does                                                                                                                                               |
+|:---------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `find_landmarks(image_path, show_landmarks=True, plot_blendshapes=False)`        | Returns the mediapipe landmark result and an annotated image.                                                                                              |
+| `find_bounding_box(image_path, show_bounding_box=True)`                          | Returns the detection result and an image with the face bounding box drawn.                                                                                |
+| `crop_square(image_path, perc_margin=1.0, plot_cropped_image=True, save=False)`  | Crops a square around the detected face; `perc_margin` adds padding (× face size). With `save=True` it writes `<name>_cropped<ext>` next to the original.  |
+| `get_landmark_model()` / `get_face_detector_model()`                             | Return the local model path, downloading the model file if missing.                                                                                        |
 
 Example — crop an image to a square around the face:
 
@@ -62,7 +62,7 @@ That is, you can download a single script/notebook and can run them independentl
 ### Interactive
 
 > Here is an example for the `square_crop.py` script/notebook (more to come).
-> Note, running this script will download a very small model in model/ (<<1MB).
+> Note, running this script will download a tiny model in model/ (<<1MB).
 
 Load one or more face images, tune the crop margin with a slider, preview the
 square crops, name them and save them to a chosen folder:
@@ -82,10 +82,10 @@ Batch-crop every non-square image in a directory, in place (each saved as
 uv run notebooks/square_crop.py --input FACE_IMAGE_DIR --margin 1.0
 ```
 
-| Argument | Default | Description |
-| --- | --- | --- |
-| `--input` | `data/faces` | Directory of face images to crop. |
-| `--margin` | `1.0` | Padding around the face, as a multiple of the face size. |
+| Argument   | Default      | Description                                              |
+|------------|--------------|----------------------------------------------------------|
+| `--input`  | `data/faces` | Directory of face images to crop.                        |
+| `--margin` | `1.0`        | Padding around the face, as a multiple of the face size. |
 
 
 ## Related work

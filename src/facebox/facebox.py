@@ -119,7 +119,7 @@ def _plot_face_blendshapes_bar_graph(face_blendshapes):
 
 
 def get_landmark_model(model_path: str | Path = LANDMARK_MODEL_PATH) -> Path:
-    """Check if landmark model exists, otherwise download it."""
+    """Check if the landmark model exists, otherwise download it."""
     model_path = Path(model_path)
     if not model_path.is_file():
         # Download the default model
@@ -142,7 +142,7 @@ def get_landmark_model(model_path: str | Path = LANDMARK_MODEL_PATH) -> Path:
 
 
 def get_face_detector_model(model_path: str | Path = DETECTION_MODEL_PATH) -> Path:
-    """Check if face detector model exists, otherwise download it."""
+    """Check if the face detector model exists, otherwise download it."""
     model_path = Path(model_path)
     if not model_path.is_file():
         # Load default model
@@ -168,11 +168,11 @@ def get_face_detector_model(model_path: str | Path = DETECTION_MODEL_PATH) -> Pa
 def _normalized_to_pixel_coordinates(
     normalized_x: float, normalized_y: float, image_width: int, image_height: int
 ) -> None | tuple[int, int]:
-    """Converts normalized value pair to pixel coordinates."""
+    """Converts a normalized value pair to pixel coordinates."""
 
     # Checks if the float value is between 0 and 1.
     def is_valid_normalized_value(value: float) -> bool:
-        """Check if normalized value is valid."""
+        """Check if the normalized value is valid."""
         return (value > 0 or math.isclose(0, value)) and (
             value < 1 or math.isclose(1, value)
         )
@@ -334,8 +334,8 @@ def crop_square(
 
     :param image_path: Path to the image to be cropped.
     :param perc_margin: Crop will be set perc_margin * 100 (%) around the face
-    :param plot_cropped_image: If true, show  cropped image
-    :param save: If true, save cropped image
+    :param plot_cropped_image: If true, show the cropped image
+    :param save: If true, save the cropped image
     """
 
     if perc_margin < 0:
