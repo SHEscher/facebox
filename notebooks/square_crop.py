@@ -18,10 +18,12 @@ uv run marimo run square_crop.py  # run as an app
 uv run marimo edit square_crop.py  # edit / author
 ```
 
-Command line (batch-crop every non-square image in a directory, in place):
+Command line (batch-crop every non-square image in a directory, in place, or
+crop a single image file):
 
 ```shell
 uv run square_crop.py --input FACE_IMAGE_DIR --margin 1.0
+uv run square_crop.py --input FACE_IMAGE.jpg --margin 1.0
 ```
 
 marimo detects how it is invoked (`mo.app_meta().mode`), so the same file works
@@ -42,10 +44,12 @@ def _(mo):
     Upload one or more face images, tune the crop **margin**, and preview the
     square crop centred on the detected face.
 
-    Run this file from the command line to batch-crop a whole directory instead.
+    Run this file from the command line to batch-crop a whole directory, or a
+    single image file, instead.
 
     ```shell
      uv run notebooks/square_crop.py --input data/faces --margin 1.0
+     uv run notebooks/square_crop.py --input data/faces/alice.jpg --margin 1.0
     ```
     """)
     return
@@ -183,6 +187,33 @@ def _(Path, crops, cv2, mo, name_inputs, output_dir, save_button):
 
 @app.cell(hide_code=True)
 def _(crop_square, cv2):
+    def crop_one(img_path, perc_margin):
+        """Crop a single image file in place; return True if it was cropped."""
+        img = cv2.imread(str(img_path))
+        if img is None:
+            print(f"Warning: Could not read '{img_path}', skipping.")
+            return False
+
+        if img.shape[0] == img.shape[1]:
+            print(f"Skipping '{img_path.name}': already square.")
+            return False
+
+        print(f"Cropping {img_path.name} (shape: {img.shape[:2]})")
+        crop_square(
+            image_path=img_path,
+            perc_margin=perc_margin,
+            plot_cropped_image=False,
+            save=True,
+        )
+        return True
+
+    def crop_image(img_path, perc_margin):
+        if not img_path.is_file():
+            print(f"Error: '{img_path}' is not a valid file.")
+            raise SystemExit(1)
+
+        crop_one(img_path, perc_margin)
+
     def crop_directory(face_dir, perc_margin):
         if not face_dir.is_dir():
             print(f"Error: '{face_dir}' is not a valid directory.")
@@ -199,37 +230,26 @@ def _(crop_square, cv2):
                 if "_cropped" in img_path.stem:
                     continue
 
-                img = cv2.imread(str(img_path))
-                if img is None:
-                    print(f"Warning: Could not read '{img_path}', skipping.")
+                if crop_one(img_path, perc_margin):
+                    n_cropped += 1
+                else:
                     n_skipped += 1
-                    continue
-
-                if img.shape[0] == img.shape[1]:
-                    n_skipped += 1
-                    continue
-
-                print(f"Cropping {img_path.name} (shape: {img.shape[:2]})")
-                crop_square(
-                    image_path=img_path,
-                    perc_margin=perc_margin,
-                    plot_cropped_image=False,
-                    save=True,
-                )
-                n_cropped += 1
 
         print(f"\nDone: {n_cropped} image(s) cropped, {n_skipped} skipped.")
 
-    return (crop_directory,)
+    return crop_directory, crop_image
 
 
 @app.cell(hide_code=True)
-def _(Path, crop_directory, mo):
+def _(Path, crop_directory, crop_image, mo):
     if mo.app_meta().mode == "script":
         cli_args = mo.cli_args()
-        cli_input_dir = Path(cli_args.get("input", "data/faces"))
+        cli_input = Path(cli_args.get("input", "data/faces"))
         cli_margin = float(cli_args.get("margin", 1.0))
-        crop_directory(cli_input_dir, cli_margin)
+        if cli_input.is_file():
+            crop_image(cli_input, cli_margin)
+        else:
+            crop_directory(cli_input, cli_margin)
     return
 
 
