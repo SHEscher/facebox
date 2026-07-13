@@ -76,16 +76,19 @@ uv run marimo edit notebooks/square_crop.py   # author / edit
 ### Command line
 
 Batch-crop every non-square image in a directory, in place (each saved as
-`<name>_cropped<ext>`):
+`<name>_cropped<ext>`), or crop a single image file:
 
 ```shell
 uv run notebooks/square_crop.py --input FACE_IMAGE_DIR --margin 1.0
+uv run notebooks/square_crop.py -i FACE_IMAGE.jpg -m 1.0
+uv run notebooks/square_crop.py --help  # or -h
 ```
 
-| Argument   | Default      | Description                                              |
-|------------|--------------|----------------------------------------------------------|
-| `--input`  | `data/faces` | Directory of face images to crop.                        |
-| `--margin` | `1.0`        | Padding around the face, as a multiple of the face size. |
+| Argument         | Default      | Description                                              |
+|------------------|--------------|----------------------------------------------------------|
+| `--input`, `-i`  | `data/faces` | Image file, or directory of images, to crop.             |
+| `--margin`, `-m` | `1.0`        | Padding around the face, as a multiple of the face size. |
+| `--help`, `-h`   | —            | Show usage help and exit.                                |
 
 
 ## Related work
