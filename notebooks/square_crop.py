@@ -23,7 +23,8 @@ crop a single image file):
 
 ```shell
 uv run square_crop.py --input FACE_IMAGE_DIR --margin 1.0
-uv run square_crop.py --input FACE_IMAGE.jpg --margin 1.0
+uv run square_crop.py -i FACE_IMAGE.jpg -m 1.0
+uv run square_crop.py --help  # or -h
 ```
 
 marimo detects how it is invoked (`mo.app_meta().mode`), so the same file works
@@ -241,11 +242,22 @@ def _(crop_square, cv2):
 
 
 @app.cell(hide_code=True)
-def _(Path, crop_directory, crop_image, mo):
+def _(Path, crop_directory, crop_image, mo, sys):
     if mo.app_meta().mode == "script":
         cli_args = mo.cli_args()
-        cli_input = Path(cli_args.get("input", "data/faces"))
-        cli_margin = float(cli_args.get("margin", 1.0))
+        if "help" in cli_args or "h" in cli_args:
+            print(
+                "Usage: uv run square_crop.py --input PATH [--margin FLOAT]\n\n"
+                "  --input, -i   Image file, or directory of images, to crop.\n"
+                "                (default: data/faces)\n"
+                "  --margin, -m  Crop margin, as a multiple of face size.\n"
+                "                (default: 1.0)\n"
+                "  --help, -h    Show this help message and exit."
+            )
+            sys.exit(0)
+
+        cli_input = Path(cli_args.get("input", cli_args.get("i", "data/faces")))
+        cli_margin = float(cli_args.get("margin", cli_args.get("m", 1.0)))
         if cli_input.is_file():
             crop_image(cli_input, cli_margin)
         else:
@@ -256,6 +268,7 @@ def _(Path, crop_directory, crop_image, mo):
 @app.cell(hide_code=True)
 def _():
     import marimo as mo
+    import sys
     import tempfile
     from pathlib import Path
 
@@ -263,7 +276,7 @@ def _():
     import matplotlib.pyplot as plt
     from facebox import crop_square
 
-    return Path, crop_square, cv2, mo, plt, tempfile
+    return Path, crop_square, cv2, mo, plt, sys, tempfile
 
 
 if __name__ == "__main__":
