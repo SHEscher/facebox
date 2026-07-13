@@ -21,12 +21,15 @@ from mediapipe import solutions
 from mediapipe.framework.formats import landmark_pb2
 
 # %% Set global vars & paths >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
+# Models are cached in the user's home directory so they are shared across
+# projects and downloaded only once.
+MODEL_DIR = Path.home() / ".facebox" / "models"
 LANDMARK_MODEL_NAME = (
     "face_landmarker_v2_with_blendshapes.task"  # "face_landmarker.task"
 )
-LANDMARK_MODEL_PATH = Path("./model") / LANDMARK_MODEL_NAME
+LANDMARK_MODEL_PATH = MODEL_DIR / LANDMARK_MODEL_NAME
 DETECTION_MODEL_NAME = "blaze_face_short_range.tflite"  # "detector.tflite"
-DETECTION_MODEL_PATH = Path("./model") / DETECTION_MODEL_NAME
+DETECTION_MODEL_PATH = MODEL_DIR / DETECTION_MODEL_NAME
 
 # For bounding box
 MARGIN = 10  # pixels
@@ -134,7 +137,7 @@ def get_landmark_model(model_path: str | Path = LANDMARK_MODEL_PATH) -> Path:
         urllib.request.urlretrieve(url, LANDMARK_MODEL_PATH)
 
         if not LANDMARK_MODEL_PATH.is_file():
-            terminal_cmd = f"mkdir model; wget -O '{LANDMARK_MODEL_PATH}' -q '{url}'"
+            terminal_cmd = f"mkdir -p '{MODEL_DIR}'; wget -O '{LANDMARK_MODEL_PATH}' -q '{url}'"
             msg = f"Could not find model '{model_path}'.\nTry to download this via the terminal:\n\n\t{terminal_cmd}\n"
             raise FileNotFoundError(msg)
 
@@ -157,7 +160,7 @@ def get_face_detector_model(model_path: str | Path = DETECTION_MODEL_PATH) -> Pa
 
         if not DETECTION_MODEL_PATH.is_file():
             terminal_cmd = (
-                f"mkdir model; wget -q -O '{DETECTION_MODEL_PATH}' -q '{url}'"
+                f"mkdir -p '{MODEL_DIR}'; wget -q -O '{DETECTION_MODEL_PATH}' -q '{url}'"
             )
             msg = f"Could not find model '{model_path}'.\nTry to download this via the terminal:\n\n\t{terminal_cmd}\n"
             raise FileNotFoundError(msg)
