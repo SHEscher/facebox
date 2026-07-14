@@ -11,12 +11,12 @@ so no manual model setup is needed.
 
 ## Installation
 
-Install straight from GitHub with [uv](https://docs.astral.sh/uv/) (or `pip`):
 
+Install straight from GitHub with [uv](https://docs.astral.sh/uv/), [pixi](https://pixi.sh/) (or `pip` or `conda`):
 ```shell
-uv add "git+https://github.com/SHEscher/facebox"
+uv | pixi add "git+https://github.com/SHEscher/facebox"
 # or
-pip install "git+https://github.com/SHEscher/facebox"
+pip | conda install "git+https://github.com/SHEscher/facebox"
 ```
 
 Requires Python `>=3.12`.
@@ -62,7 +62,7 @@ That is, you can download a single script/notebook and can run them independentl
 ### Interactive
 
 > Here is an example for the `square_crop.py` script/notebook (more to come).
-> Note, running this script will download a tiny model in model/ (<<1MB).
+> Note, running this script will download a tiny model in ~/.facebox/models/ (<<1MB).
 
 Load one or more face images, tune the crop margin with a slider, preview the
 square crops, name them and save them to a chosen folder:
